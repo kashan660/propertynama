@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  image     String?
+  role      String   @default("USER") // Changed default to USER, admin will be explicit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id        String    @id @default(cuid())
+  slug      String    @unique // e.g., "home", "about", "ruden-enclave"
+  title     String
+  content   String?   // Main content if not using sections
+  
+  // SEO Fields
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+  ogImage         String?
+
+  isPublished Boolean @default(true)
+  sections  Section[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Section {
+  id        String   @id @default(cuid())
+  type      String   // e.g., "HERO", "FEATURED_PROPERTIES", "TEXT", "CONTACT", "IMAGE_GALLERY"
+  order     Int
+  content   String   // JSON stringified data
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  price       Float
+  location    String
+  area        String
+  type        String   // e.g., "House", "Plot", "Commercial"
+  images      String   // JSON stringified array of URLs
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String
+  content   String
+  image     String?
+  author    String?
+  
+  // SEO Fields
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+  canonicalUrl    String?
+
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id             String   @id @default(cuid())
+  siteName       String   @default("PropertyNama")
+  
+  // Verification Codes
+  googleVerification String?
+  yandexVerification String?
+  bingVerification   String?
+  
+  // Default SEO
+  defaultMetaTitle       String?
+  defaultMetaDescription String?
+  defaultKeywords        String?
+  
+  updatedAt      DateTime @updatedAt
+}
+
+model NewsItem {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String
+  content   String
+  image     String?
+  source    String?
+  
+  // SEO Fields
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  fullName    String
+  cityName    String
+  country     String
+  society     String
+  plotSize    String
+  paymentPlan String
+  whatsappNo  String
+  contactNo   String
+  contactTime String?
+  status      String   @default("PENDING") // PENDING, CONTACTED, CLOSED
+  createdAt   DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  status    String   @default("UNREAD") // UNREAD, READ, REPLIED
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,5 @@
+# Run this command in your terminal to set up the database:
+npx prisma migrate dev --name init_seo
+
+# Note: The seed script (prisma/seed.ts) has been updated with the "2 Bed Apartment" blog post.
+# Re-running the migration command above will automatically seed the new content.
