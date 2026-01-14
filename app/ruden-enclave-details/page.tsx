@@ -16,6 +16,7 @@ export default async function RudnEnclaveDetailsPage() {
   // Fetch page data if it exists, otherwise use defaults
   const page = await prisma.page.findUnique({
     where: { slug: 'ruden-enclave' }, // Re-using Rudn Enclave data for hero/meta
+    include: { sections: true }
   })
 
   const title = page?.title || 'Rudn Enclave'

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Check, Cpu, GraduationCap } from "lucide-react"
 import { Metadata } from "next"
+import Image from "next/image"
 
 export const metadata: Metadata = {
   title: "Faisal Town Phase 2 Zone 3 | Silicon City & Tech Zone",
