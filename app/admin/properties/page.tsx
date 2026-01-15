@@ -4,10 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusCircle, Pencil, Trash } from "lucide-react"
 import prisma from "@/lib/prisma"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminPropertiesPage() {
-  const properties = await prisma.property.findMany({
-    orderBy: { updatedAt: 'desc' }
-  })
+  let properties: any[] = [];
+  try {
+    properties = await prisma.property.findMany({
+      orderBy: { updatedAt: 'desc' }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Admin Properties page.", error);
+  }
 
   return (
     <div className="space-y-6">

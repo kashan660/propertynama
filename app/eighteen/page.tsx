@@ -10,24 +10,33 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2 } from "lucide-react"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await prisma.page.findUnique({ where: { slug: 'eighteen' } })
-  if (!page) return { title: 'Eighteen Islamabad' }
-  
-  return {
-    title: page.metaTitle || page.title,
-    description: page.metaDescription,
-    keywords: page.keywords ? page.keywords.split(',') : [],
-    openGraph: {
-      images: page.ogImage ? [page.ogImage] : [],
-    },
+  try {
+    const page = await prisma.page.findUnique({ where: { slug: 'eighteen' } })
+    if (!page) return { title: 'Eighteen Islamabad' }
+    
+    return {
+      title: page.metaTitle || page.title,
+      description: page.metaDescription,
+      keywords: page.keywords ? page.keywords.split(',') : [],
+      openGraph: {
+        images: page.ogImage ? [page.ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return { title: 'Eighteen Islamabad' }
   }
 }
 
 export default async function EighteenPage() {
-  const page = await prisma.page.findUnique({
-    where: { slug: 'eighteen' },
-    include: { sections: { orderBy: { order: 'asc' } } }
-  })
+  let page = null;
+  try {
+    page = await prisma.page.findUnique({
+      where: { slug: 'eighteen' },
+      include: { sections: { orderBy: { order: 'asc' } } }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Eighteen page.", error);
+  }
 
   const title = page?.title || 'Eighteen Islamabad'
   const heroSection = page?.sections.find(s => s.type === 'HERO')

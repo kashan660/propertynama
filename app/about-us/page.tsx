@@ -5,26 +5,52 @@ import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await prisma.page.findUnique({ where: { slug: 'about-us' } })
-  if (!page) return { title: 'About Us' }
-  
-  return {
-    title: page.metaTitle || page.title,
-    description: page.metaDescription,
-    keywords: page.keywords ? page.keywords.split(',') : [],
-    openGraph: {
-      images: page.ogImage ? [page.ogImage] : [],
-    },
+  try {
+    const page = await prisma.page.findUnique({ where: { slug: 'about-us' } })
+    if (!page) return { title: 'About Us' }
+    
+    return {
+      title: page.metaTitle || page.title,
+      description: page.metaDescription,
+      keywords: page.keywords ? page.keywords.split(',') : [],
+      openGraph: {
+        images: page.ogImage ? [page.ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return { title: 'About Us' }
   }
 }
 
 export default async function AboutUsPage() {
-  const page = await prisma.page.findUnique({
-    where: { slug: 'about-us' },
-    include: { sections: { orderBy: { order: 'asc' } } }
-  })
+  let page;
+  try {
+    page = await prisma.page.findUnique({
+      where: { slug: 'about-us' },
+      include: { sections: { orderBy: { order: 'asc' } } }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in About Us page.", error);
+    page = null;
+  }
 
-  if (!page) return notFound()
+  if (!page) {
+    // Return a default About Us page structure if DB fails or page not found
+    return (
+      <div className="flex flex-col min-h-screen">
+        <section className="py-20 bg-muted/30">
+           <div className="container">
+             <div className="max-w-3xl mx-auto text-center space-y-6">
+               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">About PropertyNama</h1>
+               <div className="prose prose-lg dark:prose-invert mx-auto text-muted-foreground">
+                 <p>Leading Real Estate Consultants in Pakistan.</p>
+               </div>
+             </div>
+           </div>
+        </section>
+      </div>
+    )
+  }
 
   // Parse sections
   const teamSection = page.sections.find(s => s.type === 'TEAM')

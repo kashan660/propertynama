@@ -4,8 +4,15 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import prisma from "@/lib/prisma"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminSettingsPage() {
-  const settings = await prisma.siteSettings.findFirst()
+  let settings = null;
+  try {
+    settings = await prisma.siteSettings.findFirst()
+  } catch (error) {
+    console.warn("Database connection failed in Admin Settings page.", error);
+  }
 
   return (
     <div className="space-y-6">

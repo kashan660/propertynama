@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -51,7 +51,7 @@ const formSchema = z.object({
 
 import { submitBooking } from "@/app/actions/booking"
 
-export default function BookingPage() {
+function BookingContent() {
   const searchParams = useSearchParams()
   const defaultSize = searchParams.get("size")
   const defaultSociety = searchParams.get("society") || "Faisal Town Phase 2"
@@ -302,5 +302,13 @@ export default function BookingPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <BookingContent />
+    </Suspense>
   )
 }

@@ -7,8 +7,15 @@ import { Button } from "@/components/ui/button"
 import prisma from "@/lib/prisma"
 import { updateSiteSettings } from "./actions"
 
+export const dynamic = 'force-dynamic'
+
 export default async function SEOSettingsPage() {
-  const settings = await prisma.siteSettings.findFirst()
+  let settings = null;
+  try {
+    settings = await prisma.siteSettings.findFirst()
+  } catch (error) {
+    console.warn("Database connection failed in SEO Settings page.", error);
+  }
 
   return (
     <div className="space-y-6">

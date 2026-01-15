@@ -10,24 +10,33 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Home } from "lucide-react"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await prisma.page.findUnique({ where: { slug: 'ruden-enclave' } })
-  if (!page) return { title: 'Rudn Enclave' }
-  
-  return {
-    title: page.metaTitle || page.title,
-    description: page.metaDescription,
-    keywords: page.keywords ? page.keywords.split(',') : [],
-    openGraph: {
-      images: page.ogImage ? [page.ogImage] : [],
-    },
+  try {
+    const page = await prisma.page.findUnique({ where: { slug: 'ruden-enclave' } })
+    if (!page) return { title: 'Rudn Enclave' }
+    
+    return {
+      title: page.metaTitle || page.title,
+      description: page.metaDescription,
+      keywords: page.keywords ? page.keywords.split(',') : [],
+      openGraph: {
+        images: page.ogImage ? [page.ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return { title: 'Rudn Enclave' }
   }
 }
 
 export default async function RudnEnclavePage() {
-  const page = await prisma.page.findUnique({
-    where: { slug: 'ruden-enclave' },
-    include: { sections: { orderBy: { order: 'asc' } } }
-  })
+  let page = null;
+  try {
+    page = await prisma.page.findUnique({
+      where: { slug: 'ruden-enclave' },
+      include: { sections: { orderBy: { order: 'asc' } } }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Rudn Enclave page.", error);
+  }
 
   // Fallback defaults if page is not in DB
   const title = page?.title || 'Rudn Enclave'

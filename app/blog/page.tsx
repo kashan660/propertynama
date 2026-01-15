@@ -15,10 +15,15 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  let posts: any[] = []
+  try {
+    posts = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Blog page.", error)
+  }
 
   return (
     <div className="container py-10">

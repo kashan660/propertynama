@@ -14,10 +14,15 @@ export const metadata: Metadata = {
 
 export default async function RudnEnclaveDetailsPage() {
   // Fetch page data if it exists, otherwise use defaults
-  const page = await prisma.page.findUnique({
-    where: { slug: 'ruden-enclave' }, // Re-using Rudn Enclave data for hero/meta
-    include: { sections: true }
-  })
+  let page = null;
+  try {
+    page = await prisma.page.findUnique({
+      where: { slug: 'ruden-enclave' }, // Re-using Rudn Enclave data for hero/meta
+      include: { sections: true }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Rudn Enclave Details page.", error);
+  }
 
   const title = page?.title || 'Rudn Enclave'
   // Use hero content if available, or fallback

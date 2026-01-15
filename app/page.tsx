@@ -9,24 +9,34 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ContactForm } from "@/components/ContactForm"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await prisma.page.findUnique({ where: { slug: 'home' } })
-  if (!page) return { title: 'PropertyNama - Real Estate Pakistan' }
-  
-  return {
-    title: page.metaTitle || page.title,
-    description: page.metaDescription,
-    keywords: page.keywords ? page.keywords.split(',') : [],
-    openGraph: {
-      images: page.ogImage ? [page.ogImage] : [],
-    },
+  try {
+    const page = await prisma.page.findUnique({ where: { slug: 'home' } })
+    if (!page) return { title: 'PropertyNama - Real Estate Pakistan' }
+    
+    return {
+      title: page.metaTitle || page.title,
+      description: page.metaDescription,
+      keywords: page.keywords ? page.keywords.split(',') : [],
+      openGraph: {
+        images: page.ogImage ? [page.ogImage] : [],
+      },
+    }
+  } catch (error) {
+    return { title: 'PropertyNama - Real Estate Pakistan' }
   }
 }
 
 export default async function Home() {
-  const page = await prisma.page.findUnique({
-    where: { slug: 'home' },
-    include: { sections: { orderBy: { order: 'asc' } } }
-  })
+  let page;
+  try {
+    page = await prisma.page.findUnique({
+      where: { slug: 'home' },
+      include: { sections: { orderBy: { order: 'asc' } } }
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Home page, using defaults.", error);
+    page = null;
+  }
 
   // Defaults if DB is not ready
   const heroSection = page?.sections.find(s => s.type === 'HERO')

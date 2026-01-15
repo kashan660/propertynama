@@ -16,10 +16,16 @@ export const metadata: Metadata = {
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function NewsFeedPage() {
-  const newsItems = await prisma.newsItem.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  let newsItems: any[] = []
+  try {
+    newsItems = await prisma.newsItem.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    console.warn("Database connection failed in News Feed page.", error)
+    // Fallback to empty array or we could have static news items
+  }
 
   return (
     <div className="container py-10">
