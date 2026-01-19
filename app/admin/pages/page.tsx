@@ -4,12 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusCircle, Pencil, Trash } from "lucide-react"
 import prisma from "@/lib/prisma"
 
+export const dynamic = 'force-dynamic'
+
 async function getPages() {
   try {
-    return await prisma.page.findMany({
+    const pages = await prisma.page.findMany({
       orderBy: { updatedAt: 'desc' }
     })
+    return pages
   } catch (e) {
+    console.error("Failed to fetch pages:", e)
     return []
   }
 }
@@ -24,7 +28,7 @@ export default async function AdminPages() {
           <h2 className="text-3xl font-bold tracking-tight">Pages</h2>
           <p className="text-muted-foreground">Manage your website pages and content sections.</p>
         </div>
-        <Link href="/admin/pages/create">
+        <Link href="/admin/pages/new">
           <Button>
             <PlusCircle className="mr-2 h-4 w-4" />
             Create New Page

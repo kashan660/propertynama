@@ -5,6 +5,7 @@ import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ImageIcon } from "lucide-react"
 
 export const metadata: Metadata = {
   title: 'Real Estate Blog | PropertyNama',
@@ -36,22 +37,22 @@ export default async function BlogPage() {
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <Card key={post.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="relative aspect-[16/9] w-full">
+          <Card key={post.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow group">
+            <Link href={`/blog/${post.slug}`} className="relative aspect-[16/9] w-full block bg-muted">
               {post.image ? (
                 <Image
                   src={post.image}
                   alt={post.title}
                   fill
-                  className="object-cover transition-transform hover:scale-105 duration-500"
+                  className="object-cover transition-transform group-hover:scale-105 duration-500"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center bg-muted">
-                  <span className="text-muted-foreground">No Image</span>
+                <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">
+                  <ImageIcon className="h-12 w-12 opacity-50" />
                 </div>
               )}
-            </div>
+            </Link>
             <CardHeader>
               <CardTitle className="line-clamp-2 text-xl hover:text-primary transition-colors">
                 <Link href={`/blog/${post.slug}`}>

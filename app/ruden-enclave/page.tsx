@@ -7,7 +7,7 @@ import prisma from '@/lib/prisma'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MapPin, Home } from "lucide-react"
+import { MapPin, Home, ImageIcon } from "lucide-react"
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -50,7 +50,7 @@ export default async function RudnEnclavePage() {
     <div className="flex min-h-screen flex-col">
       {/* Hero Section from DB */}
       <section className="relative h-[400px] w-full overflow-hidden bg-emerald-900 text-white">
-        {heroContent?.backgroundImage && (
+        {heroContent?.backgroundImage ? (
           <Image
             src={heroContent.backgroundImage}
             alt="Rudn Enclave"
@@ -58,6 +58,10 @@ export default async function RudnEnclavePage() {
             className="object-cover opacity-40"
             priority
           />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center opacity-20">
+             <ImageIcon className="h-32 w-32" />
+          </div>
         )}
         <div className="relative container flex h-full flex-col items-center justify-center text-center z-10">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl drop-shadow-md">
@@ -113,12 +117,14 @@ export default async function RudnEnclavePage() {
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl overflow-hidden h-[400px] relative">
+              <div className="rounded-xl overflow-hidden h-[400px] relative bg-slate-100">
                  <Image 
                    src="https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=1000&auto=format&fit=crop" 
                    alt="Ring Road" 
                    fill
                    className="object-cover"
+                   placeholder="blur"
+                   blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                  />
               </div>
             </div>

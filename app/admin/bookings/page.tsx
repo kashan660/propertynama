@@ -14,11 +14,16 @@ import { format } from 'date-fns'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminBookingsPage() {
-  const bookings = await prisma.booking.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
+  let bookings: any[] = []
+  try {
+    bookings = await prisma.booking.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+  } catch (error) {
+    console.warn("Database connection failed in Admin Bookings page.", error)
+  }
 
   return (
     <div className="container py-10">

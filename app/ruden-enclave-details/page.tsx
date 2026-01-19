@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, ImageIcon } from "lucide-react"
 
 export const metadata: Metadata = {
   title: 'Rudn Enclave Details | PropertyNama',
@@ -42,7 +42,9 @@ export default async function RudnEnclaveDetailsPage() {
             priority
           />
         ) : (
-           <div className="absolute inset-0 bg-emerald-900/80" />
+           <div className="absolute inset-0 bg-emerald-900/80 flex items-center justify-center">
+              <ImageIcon className="h-32 w-32 opacity-20" />
+           </div>
         )}
         <div className="relative container flex h-full flex-col items-center justify-center text-center z-10">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -121,7 +123,7 @@ export default async function RudnEnclaveDetailsPage() {
                <Card>
                 <div className="aspect-video w-full bg-slate-100 relative overflow-hidden rounded-t-lg">
                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-slate-200">
-                     1 Kanal Plot Image
+                     <ImageIcon className="h-12 w-12 opacity-50" />
                    </div>
                 </div>
                 <CardHeader>

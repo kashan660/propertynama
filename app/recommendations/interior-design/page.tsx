@@ -141,6 +141,8 @@ export default function InteriorDesignPage() {
                  alt="Modern Kitchen"
                  fill
                  className="object-cover transition-transform group-hover:scale-105"
+                 placeholder="blur"
+                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                />
                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                   <div className="text-white">
@@ -155,6 +157,8 @@ export default function InteriorDesignPage() {
                  alt="Living Area"
                  fill
                  className="object-cover transition-transform group-hover:scale-105"
+                 placeholder="blur"
+                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                />
                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                   <div className="text-white">
@@ -169,6 +173,8 @@ export default function InteriorDesignPage() {
                  alt="Master Bedroom"
                  fill
                  className="object-cover transition-transform group-hover:scale-105"
+                 placeholder="blur"
+                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                />
                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                   <div className="text-white">

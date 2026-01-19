@@ -8,7 +8,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['images.unsplash.com', 'propertynama.pk'],
+    domains: ['images.unsplash.com', 'propertynama.pk', 'propertynaama.com'],
   },
 }
 

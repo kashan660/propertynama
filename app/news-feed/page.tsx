@@ -5,7 +5,7 @@ import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, ImageIcon } from "lucide-react"
 
 export const metadata: Metadata = {
   title: 'Top 4 Real Estate Investment Projects in Islamabad | PropertyNama',
@@ -151,22 +151,24 @@ export default async function NewsFeedPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {newsItems.map((item) => (
-          <Card key={item.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="relative aspect-video w-full">
+          <Card key={item.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow group">
+            <Link href={`/news-feed/${item.slug}`} className="relative aspect-video w-full block bg-muted">
               {item.image ? (
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform group-hover:scale-105 duration-500"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                 />
               ) : (
-                <div className="flex h-full items-center justify-center bg-muted">
-                  <span className="text-muted-foreground">No Image</span>
+                <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">
+                  <ImageIcon className="h-12 w-12 opacity-50" />
                 </div>
               )}
-            </div>
+            </Link>
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <Badge variant="outline">{item.source || 'PropertyNama'}</Badge>

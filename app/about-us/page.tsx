@@ -22,6 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 export default async function AboutUsPage() {
   let page;
   try {
@@ -81,13 +83,19 @@ export default async function AboutUsPage() {
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 justify-center">
               {teamContent.members.map((member: any, index: number) => (
                 <div key={index} className="flex flex-col items-center text-center space-y-4">
-                  <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-background shadow-xl">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-background shadow-xl bg-muted flex items-center justify-center">
+                    {member.image ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                       <Avatar className="h-full w-full">
+                          <AvatarFallback className="text-4xl">{member.name.charAt(0)}</AvatarFallback>
+                       </Avatar>
+                    )}
                   </div>
                   <div>
                     <h3 className="text-xl font-bold">{member.name}</h3>

@@ -42,6 +42,7 @@ import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp"
 import { Toaster } from "@/components/ui/toaster"
+import { Providers } from "@/components/Providers"
 
 export default function RootLayout({
   children,
@@ -51,13 +52,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "min-h-screen bg-background font-sans antialiased flex flex-col")}>
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <FloatingWhatsApp />
-        <Toaster />
+        <Providers>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <FloatingWhatsApp />
+          <Toaster />
+        </Providers>
       </body>
     </html>
   )

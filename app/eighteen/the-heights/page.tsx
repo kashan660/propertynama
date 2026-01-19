@@ -2,16 +2,88 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import prisma from '@/lib/prisma'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import { CheckCircle2, Home, Maximize, Bed } from "lucide-react"
+import { CheckCircle2, Home, Maximize, Bed, ImageIcon } from "lucide-react"
 
 export const metadata: Metadata = {
   title: 'The Heights - Eighteen Islamabad | Luxury Apartments',
   description: 'The Heights at Eighteen Islamabad offers premium 1-3 bedroom apartments and 5-bedroom penthouses with views of the 18-hole golf course.',
 }
 
-export default function TheHeightsPage() {
+// Fallback data in case DB is empty or connection fails
+const FALLBACK_APARTMENTS = [
+  {
+    id: "studio",
+    title: "Studio Apartment",
+    description: "Compact Luxury",
+    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop",
+    beds: "1 Bedroom",
+    size: null,
+    details: "The studio apartment comes with fully fitted wardrobes, a kitchen, a single bathroom and a bedroom with an en-suite private balcony.",
+    link: "/booking?society=Eighteen Heights&size=Studio"
+  },
+  {
+    id: "1-bed",
+    title: "1 Bedroom Apartment",
+    description: "Modern Living",
+    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1200&auto=format&fit=crop",
+    beds: "1 Bedroom",
+    size: null,
+    details: "This magnificent one-bedroom apartment, located just off the verge of the 18-hole golf course boasts incredible views set in a modern locale.",
+    link: "/booking?society=Eighteen Heights&size=1 Bedroom"
+  },
+  {
+    id: "2-bed",
+    title: "2 Bedroom Apartment",
+    description: "Cosy & Comfortable",
+    image: "https://images.unsplash.com/photo-1484154218962-a1c002085d2f?q=80&w=1200&auto=format&fit=crop",
+    beds: "2 Bedrooms",
+    size: null,
+    details: "This cosy two-bedroom apartment comprises two en-suite bathrooms, a powder room and a parking space.",
+    link: "/booking?society=Eighteen Heights&size=2 Bedroom"
+  },
+  {
+    id: "3-bed",
+    title: "3 Bedroom Apartment",
+    description: "Spacious Sophistication",
+    image: "https://images.unsplash.com/photo-1502005229766-939cb0a54109?q=80&w=1200&auto=format&fit=crop",
+    beds: "3 Beds",
+    size: "2,196+ ft²",
+    details: "This sophisticated 3-bedroom apartment is sprawled on 2,196 ft² to 2,207 ft² of area in the heart of the development.",
+    link: "/booking?society=Eighteen Heights&size=3 Bedroom"
+  },
+  {
+    id: "penthouse",
+    title: "Penthouse",
+    description: "Ultimate Luxury",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200&auto=format&fit=crop",
+    beds: "5 Beds",
+    size: "4,409+ ft²",
+    details: "Designed by British and Italian designers, this decadent 5-bedroom penthouse apartment offers a space ranging from 4,409 ft² to 4,579 ft².",
+    link: "/booking?society=Eighteen Heights&size=Penthouse",
+    isWide: true
+  }
+]
+
+export default async function TheHeightsPage() {
+  let apartmentData = FALLBACK_APARTMENTS
+  
+  try {
+    const page = await prisma.page.findUnique({
+      where: { slug: 'eighteen-the-heights' },
+      include: { sections: true }
+    })
+    
+    const apartmentsSection = page?.sections.find(s => s.type === 'APARTMENT_LIST')
+    if (apartmentsSection?.content) {
+      apartmentData = JSON.parse(apartmentsSection.content)
+    }
+  } catch (error) {
+    console.warn("Database connection failed in The Heights page, using fallback data.", error)
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
@@ -82,155 +154,45 @@ export default function TheHeightsPage() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {/* Studio */}
-            <Card className="flex flex-col">
-              <div className="aspect-[4/3] w-full bg-slate-200 relative overflow-hidden rounded-t-lg">
-                <Image
-                  src="/images/apartments/studio.svg"
-                  alt="Studio Apartment"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Studio Apartment</CardTitle>
-                <CardDescription>Compact Luxury</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Bed className="h-5 w-5" />
-                  <span>1 Bedroom</span>
+            {apartmentData.map((apt: any) => (
+              <Card key={apt.id} className={`flex flex-col ${apt.isWide ? 'md:col-span-2 lg:col-span-2' : ''}`}>
+                <div className={`w-full bg-slate-200 relative overflow-hidden rounded-t-lg ${apt.isWide ? 'aspect-[21/9]' : 'aspect-[4/3]'}`}>
+                  {apt.image ? (
+                    <Image
+                      src={apt.image}
+                      alt={apt.title}
+                      fill
+                      className="object-cover"
+                      sizes={apt.isWide ? "(max-width: 768px) 100vw, 100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">
+                      <ImageIcon className="h-12 w-12 opacity-50" />
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-slate-600">
-                  The studio apartment comes with fully fitted wardrobes, a kitchen, a single bathroom and a bedroom with an en-suite private balcony.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/booking?society=Eighteen Heights&size=Studio">Book Now</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* 1 Bedroom */}
-            <Card className="flex flex-col">
-               <div className="aspect-[4/3] w-full bg-slate-200 relative overflow-hidden rounded-t-lg">
-                <Image
-                  src="/images/apartments/1-bedroom.svg"
-                  alt="1 Bedroom Apartment"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>1 Bedroom Apartment</CardTitle>
-                <CardDescription>Modern Living</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Bed className="h-5 w-5" />
-                  <span>1 Bedroom</span>
-                </div>
-                <p className="text-sm text-slate-600">
-                  This magnificent one-bedroom apartment, located just off the verge of the 18-hole golf course boasts incredible views set in a modern locale.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/booking?society=Eighteen Heights&size=1 Bedroom">Book Now</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* 2 Bedroom */}
-            <Card className="flex flex-col">
-               <div className="aspect-[4/3] w-full bg-slate-200 relative overflow-hidden rounded-t-lg">
-                <Image
-                  src="/images/apartments/2-bedroom.svg"
-                  alt="2 Bedroom Apartment"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>2 Bedroom Apartment</CardTitle>
-                <CardDescription>Cosy & Comfortable</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Bed className="h-5 w-5" />
-                  <span>2 Bedrooms</span>
-                </div>
-                <p className="text-sm text-slate-600">
-                  This cosy two-bedroom apartment comprises two en-suite bathrooms, a powder room and a parking space.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/booking?society=Eighteen Heights&size=2 Bedroom">Book Now</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* 3 Bedroom */}
-            <Card className="flex flex-col">
-               <div className="aspect-[4/3] w-full bg-slate-200 relative overflow-hidden rounded-t-lg">
-                <Image
-                  src="/images/apartments/3-bedroom.svg"
-                  alt="3 Bedroom Apartment"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>3 Bedroom Apartment</CardTitle>
-                <CardDescription>Spacious Sophistication</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                 <div className="flex items-center gap-4 text-muted-foreground">
-                  <div className="flex items-center gap-1"><Bed className="h-5 w-5" /> 3 Beds</div>
-                  <div className="flex items-center gap-1"><Maximize className="h-5 w-5" /> 2,196+ ft²</div>
-                </div>
-                <p className="text-sm text-slate-600">
-                  This sophisticated 3-bedroom apartment is sprawled on 2,196 ft² to 2,207 ft² of area in the heart of the development.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/booking?society=Eighteen Heights&size=3 Bedroom">Book Now</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-
-             {/* Penthouse */}
-            <Card className="flex flex-col md:col-span-2 lg:col-span-2">
-               <div className="aspect-[21/9] w-full bg-slate-200 relative overflow-hidden rounded-t-lg">
-                <Image
-                  src="/images/apartments/penthouse.svg"
-                  alt="Penthouse"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <CardHeader>
-                <CardTitle>Penthouse</CardTitle>
-                <CardDescription>Ultimate Luxury</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                 <div className="flex items-center gap-4 text-muted-foreground">
-                  <div className="flex items-center gap-1"><Bed className="h-5 w-5" /> 5 Beds</div>
-                  <div className="flex items-center gap-1"><Maximize className="h-5 w-5" /> 4,409+ ft²</div>
-                </div>
-                <p className="text-sm text-slate-600">
-                  Designed by British and Italian designers, this decadent 5-bedroom penthouse apartment offers a space ranging from 4,409 ft² to 4,579 ft².
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" asChild>
-                  <Link href="/booking?society=Eighteen Heights&size=Penthouse">Book Now</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+                <CardHeader>
+                  <CardTitle>{apt.title}</CardTitle>
+                  <CardDescription>{apt.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 space-y-4">
+                  <div className="flex items-center gap-4 text-muted-foreground">
+                    <div className="flex items-center gap-1"><Bed className="h-5 w-5" /> {apt.beds}</div>
+                    {apt.size && (
+                      <div className="flex items-center gap-1"><Maximize className="h-5 w-5" /> {apt.size}</div>
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-600">
+                    {apt.details}
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" asChild>
+                    <Link href={apt.link}>Book Now</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Menu, X, ChevronDown, Phone } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { Menu, X, ChevronDown, Phone, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { Logo } from "@/components/Logo"
 
 export function Navbar() {
+  const { data: session } = useSession()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
   const toggleMobileMenu = () => {
@@ -80,7 +82,12 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center space-x-4">
-          {/* Admin and Listing hidden as per requirements */}
+          {session?.user?.role === 'ADMIN' && (
+            <Link href="/admin" className="flex items-center space-x-2 text-sm font-medium text-primary hover:opacity-80 transition-opacity">
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Dashboard</span>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -120,6 +127,13 @@ export function Navbar() {
 
              <Link href="/about-us" className="font-medium hover:text-primary" onClick={toggleMobileMenu}>About Us</Link>
              <Link href="/contact-us" className="font-medium hover:text-primary" onClick={toggleMobileMenu}>Contact Us</Link>
+             
+             {session?.user?.role === 'ADMIN' && (
+               <Link href="/admin" className="font-medium text-primary flex items-center" onClick={toggleMobileMenu}>
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Admin Dashboard
+               </Link>
+             )}
           </div>
           <div className="pt-4 flex flex-col space-y-3">
             <div className="flex items-center justify-center space-x-2 text-sm font-medium text-muted-foreground pb-2">

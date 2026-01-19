@@ -54,6 +54,8 @@ export default function TopPicksPage() {
               alt="Faisal Town Development"
               fill
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
             />
           </div>
         </div>
@@ -81,6 +83,8 @@ export default function TopPicksPage() {
                      alt="Faisal Hills"
                      fill
                      className="object-cover"
+                     placeholder="blur"
+                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                    />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
@@ -170,6 +174,8 @@ export default function TopPicksPage() {
                      alt="Faisal Jewel"
                      fill
                      className="object-cover"
+                     placeholder="blur"
+                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                    />
                 </div>
                 <div className="w-full md:w-1/2 space-y-4">

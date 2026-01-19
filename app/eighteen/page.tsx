@@ -7,7 +7,7 @@ import prisma from '@/lib/prisma'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, ImageIcon } from "lucide-react"
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -46,14 +46,20 @@ export default async function EighteenPage() {
     <div className="flex min-h-screen flex-col">
       {/* Hero */}
       <section className="relative h-[500px] w-full overflow-hidden bg-slate-900 text-white">
-        {heroContent?.backgroundImage && (
+        {heroContent?.backgroundImage ? (
           <Image
             src={heroContent.backgroundImage}
             alt="Eighteen Islamabad"
             fill
             className="object-cover opacity-50"
             priority
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
           />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
+            <ImageIcon className="h-32 w-32 opacity-20 text-white" />
+          </div>
         )}
         <div className="relative container flex h-full flex-col items-center justify-center text-center z-10">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -136,6 +142,8 @@ export default async function EighteenPage() {
                      alt="1/2 Kanal Villa" 
                      fill
                      className="object-cover"
+                     placeholder="blur"
+                     blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
                    />
                 </div>
                 <CardHeader>

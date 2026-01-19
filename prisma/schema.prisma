@@ -61,6 +61,7 @@ model Property {
   area        String
   type        String   // e.g., "House", "Plot", "Commercial"
   images      String   // JSON stringified array of URLs
+  video       String?  // Optional video URL
   featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -73,6 +74,7 @@ model BlogPost {
   excerpt   String
   content   String
   image     String?
+  video     String?  // Optional video URL
   author    String?
   
   // SEO Fields

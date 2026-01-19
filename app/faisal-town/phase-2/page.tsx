@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Navbar } from "@/components/Navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -64,12 +65,14 @@ export default function FaisalTownPhase2() {
               </li>
             </ul>
           </div>
-          <div className="rounded-xl overflow-hidden shadow-2xl">
-             {/* eslint-disable-next-line @next/next/no-img-element */}
-             <img 
+          <div className="rounded-xl overflow-hidden shadow-2xl relative h-[400px]">
+             <Image 
               src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=1000&auto=format&fit=crop" 
               alt="Faisal Town Phase 2 Master Plan" 
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
             />
           </div>
         </div>
