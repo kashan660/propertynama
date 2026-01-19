@@ -48,8 +48,6 @@ export default function FaisalTown() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   )
 }

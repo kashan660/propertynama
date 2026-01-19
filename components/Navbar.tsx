@@ -105,6 +105,7 @@ export function Navbar() {
              <div className="space-y-2">
                 <div className="font-semibold text-primary">Faisal Town</div>
                 <div className="pl-4 flex flex-col space-y-2 text-sm text-muted-foreground">
+                   <Link href="/faisal-town" onClick={toggleMobileMenu} className="font-semibold text-foreground">Faisal Town Main</Link>
                    <Link href="/faisal-town/phase-1" onClick={toggleMobileMenu}>Phase 1</Link>
                    <Link href="/faisal-town/phase-2" onClick={toggleMobileMenu}>Phase 2</Link>
                 </div>
@@ -133,6 +134,19 @@ export function Navbar() {
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Admin Dashboard
                </Link>
+             )}
+
+             {session?.user && (
+               <button 
+                 onClick={() => {
+                   toggleMobileMenu();
+                   signOut({ callbackUrl: '/' });
+                 }}
+                 className="font-medium text-destructive flex items-center w-full text-left"
+               >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+               </button>
              )}
           </div>
           <div className="pt-4 flex flex-col space-y-3">
