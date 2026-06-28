@@ -11,6 +11,12 @@ const bcrypt = require('bcryptjs');
 dotenv.config();
 
 const { createSequelize } = require('./lib/db');
+const cache = require('./lib/cache');
+
+// TTLs (ms) for the public read paths — bounds staleness against a remote DB.
+const TTL_SETTINGS = 5 * 60 * 1000;
+const TTL_LIST = 2 * 60 * 1000;
+const TTL_ITEM = 2 * 60 * 1000;
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -118,34 +124,48 @@ sequelize.sync({ alter: true }).then(async () => {
   app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
 }).catch(err => console.error(err));
 
+function getSettingMap() {
+  return cache.cached('settings', TTL_SETTINGS, async () => {
+    const settings = await SiteSetting.findAll({ raw: true });
+    return Object.fromEntries(settings.map(s => [s.key, s.value]));
+  });
+}
+function getPublishedPages() {
+  return cache.cached('pages:published', TTL_LIST, () =>
+    Page.findAll({ where: { isPublished: true }, order: [['createdAt', 'DESC']], raw: true }));
+}
+function getPublishedBlogs() {
+  return cache.cached('blogs:published', TTL_LIST, () =>
+    Blog.findAll({ where: { isPublished: true }, order: [['createdAt', 'DESC']], raw: true }));
+}
+
 app.get('/', async (req, res) => {
-  const settings = await SiteSetting.findAll({ raw: true });
-  const settingMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
-  const pages = await Page.findAll({ where: { isPublished: true }, order: [['createdAt', 'DESC']] });
-  const blogs = await Blog.findAll({ where: { isPublished: true }, order: [['createdAt', 'DESC']] });
+  const [settingMap, pages, blogs] = await Promise.all([getSettingMap(), getPublishedPages(), getPublishedBlogs()]);
   res.render('home', { settingMap, pages, blogs, user: req.session.user });
 });
 
 app.get('/page/:slug', async (req, res) => {
-  const page = await Page.findOne({ where: { slug: req.params.slug, isPublished: true } });
+  const [page, settingMap] = await Promise.all([
+    cache.cached(`page:${req.params.slug}`, TTL_ITEM, () =>
+      Page.findOne({ where: { slug: req.params.slug, isPublished: true }, raw: true })),
+    getSettingMap()
+  ]);
   if (!page) return res.status(404).send('Page not found');
-  const settings = await SiteSetting.findAll({ raw: true });
-  const settingMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
   res.render('page', { page, settingMap, user: req.session.user });
 });
 
 app.get('/blog/:slug', async (req, res) => {
-  const blog = await Blog.findOne({ where: { slug: req.params.slug, isPublished: true } });
+  const [blog, settingMap] = await Promise.all([
+    cache.cached(`blog:${req.params.slug}`, TTL_ITEM, () =>
+      Blog.findOne({ where: { slug: req.params.slug, isPublished: true }, raw: true })),
+    getSettingMap()
+  ]);
   if (!blog) return res.status(404).send('Blog not found');
-  const settings = await SiteSetting.findAll({ raw: true });
-  const settingMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
   res.render('blog', { blog, settingMap, user: req.session.user });
 });
 
 app.get('/blogs', async (req, res) => {
-  const blogs = await Blog.findAll({ where: { isPublished: true }, order: [['createdAt', 'DESC']] });
-  const settings = await SiteSetting.findAll({ raw: true });
-  const settingMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
+  const [blogs, settingMap] = await Promise.all([getPublishedBlogs(), getSettingMap()]);
   res.render('blogs', { blogs, settingMap, user: req.session.user });
 });
 
@@ -192,6 +212,7 @@ app.post('/admin/settings', ensureAdmin, async (req, res) => {
   for (const [key, value] of Object.entries(req.body)) {
     await SiteSetting.upsert({ key, value });
   }
+  cache.clear();
   res.redirect('/admin');
 });
 
@@ -207,6 +228,7 @@ app.post('/admin/pages', ensureAdmin, upload.single('image'), async (req, res) =
     image: toDataUri(req.file),
     isPublished: isPublished === 'on'
   });
+  cache.clear();
   res.redirect('/admin');
 });
 
@@ -222,6 +244,7 @@ app.post('/admin/blogs', ensureAdmin, upload.single('image'), async (req, res) =
     image: toDataUri(req.file),
     isPublished: isPublished === 'on'
   });
+  cache.clear();
   res.redirect('/admin');
 });
 
@@ -239,6 +262,7 @@ app.post('/admin/pages/:id/edit', ensureAdmin, upload.single('image'), async (re
     image: toDataUri(req.file) || page.image,
     isPublished: isPublished === 'on'
   });
+  cache.clear();
   res.redirect('/admin');
 });
 
@@ -256,15 +280,18 @@ app.post('/admin/blogs/:id/edit', ensureAdmin, upload.single('image'), async (re
     image: toDataUri(req.file) || blog.image,
     isPublished: isPublished === 'on'
   });
+  cache.clear();
   res.redirect('/admin');
 });
 
 app.get('/admin/pages/:id/delete', ensureAdmin, async (req, res) => {
   await Page.destroy({ where: { id: req.params.id } });
+  cache.clear();
   res.redirect('/admin');
 });
 
 app.get('/admin/blogs/:id/delete', ensureAdmin, async (req, res) => {
   await Blog.destroy({ where: { id: req.params.id } });
+  cache.clear();
   res.redirect('/admin');
 });
