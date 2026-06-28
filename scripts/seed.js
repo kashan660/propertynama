@@ -1,27 +1,22 @@
 /**
- * Seed a database from scripts/seed-data.json. Works against Postgres
- * (when DATABASE_URL / POSTGRES_URL is set) or local SQLite otherwise.
+ * Seed a database from scripts/seed-data.json. Works against MySQL, Postgres,
+ * or local SQLite depending on the env (see lib/db.js).
  * Idempotent: upserts by slug / key, safe to run repeatedly.
  *
- * Production (Postgres):
- *   DATABASE_URL="postgres://..." NODE_ENV=production node scripts/seed.js
+ * Hostinger MySQL:
+ *   DB_DIALECT=mysql DB_HOST=srv1475.hstgr.io DB_NAME=... DB_USER=... \
+ *   DB_PASSWORD=... node scripts/seed.js
  */
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
-
-const ROOT = path.join(__dirname, '..');
+const { DataTypes } = require('sequelize');
+const { createSequelize } = require('../lib/db');
 
 async function main() {
   const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'seed-data.json'), 'utf8'));
 
-  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL;
-  const sequelize = databaseUrl
-    ? new Sequelize(databaseUrl, { dialect: 'postgres', logging: false,
-        dialectOptions: { ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true'
-          ? { require: true, rejectUnauthorized: false } : false } })
-    : new Sequelize({ dialect: 'sqlite', logging: false,
-        storage: process.env.DB_STORAGE ? path.join(ROOT, process.env.DB_STORAGE) : path.join(ROOT, 'database.sqlite') });
+  const sequelize = createSequelize();
 
   const SiteSetting = sequelize.define('SiteSetting', {
     key: { type: DataTypes.STRING, allowNull: false, unique: true },
@@ -50,7 +45,7 @@ async function main() {
   for (const p of data.pages) { const [, c] = await Page.findOrCreate({ where: { slug: p.slug }, defaults: p }); if (!c) await Page.update(p, { where: { slug: p.slug } }); pn++; }
   for (const b of data.blogs) { const [, c] = await Blog.findOrCreate({ where: { slug: b.slug }, defaults: b }); if (!c) await Blog.update(b, { where: { slug: b.slug } }); bn++; }
 
-  console.log(`seeded ${pn} pages, ${bn} blogs, ${data.settings.length} settings into ${databaseUrl ? 'Postgres' : 'SQLite'}`);
+  console.log(`seeded ${pn} pages, ${bn} blogs, ${data.settings.length} settings into ${sequelize.getDialect()}`);
   await sequelize.close();
 }
 main().catch(e => { console.error(e); process.exit(1); });

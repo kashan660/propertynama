@@ -10,27 +10,12 @@ const bcrypt = require('bcryptjs');
 
 dotenv.config();
 
+const { createSequelize } = require('./lib/db');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_PRISMA_URL;
-const isPostgresConfig = Boolean(databaseUrl);
-
-const sequelize = isPostgresConfig
-  ? new Sequelize(databaseUrl, {
-      dialect: 'postgres',
-      logging: false,
-      dialectOptions: {
-        ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true'
-          ? { require: true, rejectUnauthorized: false }
-          : false
-      }
-    })
-  : new Sequelize({
-      dialect: 'sqlite',
-      storage: process.env.DB_STORAGE ? path.join(__dirname, process.env.DB_STORAGE) : path.join(__dirname, 'database.sqlite'),
-      logging: false,
-    });
+const sequelize = createSequelize();
 
 const upload = multer({ storage: multer.memoryStorage() });
 
