@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background:#f4f7fb; color:#0f172a; }
+    .admin-shell { max-width: 1200px; margin: 2rem auto; display:grid; gap:1.5rem; }
+    .panel { background:white; padding:1.5rem; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08); }
+    form input, form textarea, form select, form button { width:100%; padding:0.8rem; margin:0.4rem 0; border-radius:10px; border:1px solid #dbe2ea; }
+    form button { background:#0f766e; color:white; cursor:pointer; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:0.8rem; border-bottom:1px solid #e5e7eb; text-align:left; }
+    .actions a { margin-right:0.5rem; color:#0f766e; }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <div class="panel">
+      <h2>Admin Dashboard</h2>
+      <p>Manage site settings, pages, blogs, and media from one place.</p>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <div class="panel">
+      <h3>Site Settings</h3>
+      <form method="post" action="/admin/settings">
+        <input name="site_name" value="<%= settingMap.site_name || '' %>" placeholder="Site Name">
+        <input name="site_title" value="<%= settingMap.site_title || '' %>" placeholder="Site Title">
+        <input name="whatsapp" value="<%= settingMap.whatsapp || '' %>" placeholder="WhatsApp Number">
+        <input name="facebook" value="<%= settingMap.facebook || '' %>" placeholder="Facebook URL">
+        <input name="instagram" value="<%= settingMap.instagram || '' %>" placeholder="Instagram URL">
+        <input name="twitter" value="<%= settingMap.twitter || '' %>" placeholder="Twitter URL">
+        <input name="linkedin" value="<%= settingMap.linkedin || '' %>" placeholder="LinkedIn URL">
+        <input name="meta_description" value="<%= settingMap.meta_description || '' %>" placeholder="Meta Description">
+        <input name="meta_keywords" value="<%= settingMap.meta_keywords || '' %>" placeholder="Meta Keywords">
+        <button type="submit">Save Settings</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>Create Page</h3>
+      <form method="post" action="/admin/pages" enctype="multipart/form-data">
+        <input name="slug" placeholder="Page Slug" required>
+        <input name="title" placeholder="Page Title" required>
+        <textarea name="content" rows="8" placeholder="Page content"></textarea>
+        <input name="summary" placeholder="Short Summary">
+        <input name="video" placeholder="Video URL">
+        <input name="template" placeholder="Template (default)">
+        <input name="image" type="file">
+        <label><input name="isPublished" type="checkbox" checked> Publish</label>
+        <button type="submit">Create Page</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>Create Blog</h3>
+      <form method="post" action="/admin/blogs" enctype="multipart/form-data">
+        <input name="slug" placeholder="Blog Slug" required>
+        <input name="title" placeholder="Blog Title" required>
+        <input name="excerpt" placeholder="Short Excerpt">
+        <textarea name="content" rows="8" placeholder="Blog content"></textarea>
+        <input name="category" placeholder="Category">
+        <input name="image" type="file">
+        <input name="video" placeholder="Video URL">
+        <label><input name="isPublished" type="checkbox" checked> Publish</label>
+        <button type="submit">Create Blog</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>Pages</h3>
+      <table>
+        <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% pages.forEach(page => { %>
+            <tr>
+              <td><%= page.title %></td>
+              <td><%= page.slug %></td>
+              <td><%= page.isPublished ? 'Published' : 'Draft' %></td>
+              <td class="actions"><a href="/page/<%= page.slug %>" target="_blank">View</a><a href="/admin/pages/<%= page.id %>/delete">Delete</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>Blogs</h3>
+      <table>
+        <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% blogs.forEach(blog => { %>
+            <tr>
+              <td><%= blog.title %></td>
+              <td><%= blog.slug %></td>
+              <td><%= blog.isPublished ? 'Published' : 'Draft' %></td>
+              <td class="actions"><a href="/blog/<%= blog.slug %>" target="_blank">View</a><a href="/admin/blogs/<%= blog.id %>/delete">Delete</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

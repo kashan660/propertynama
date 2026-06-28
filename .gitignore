@@ -1,0 +1,24 @@
+node_modules/
+database.sqlite
+uploads/*
+.env
+.vercel
+.env*
+
+# Backup archive (kept outside the repo, never commit)
+*.tar
+propertynamma-mirror-backup.tar
+
+# HTTrack website mirror — migrated into the DB, do not re-add
+propertynaama.com/
+hts-cache/
+cdnjs.cloudflare.com/
+code.jquery.com/
+pagead2.googlesyndication.com/
+static.xx.fbcdn.net/
+s3-us-west-2.amazonaws.com/
+www.lda.gop.pk/
+backblue.gif
+fade.gif
+hts-log.txt
+index.html

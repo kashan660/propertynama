@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= settingMap.site_title %></title>
+  <meta name="description" content="<%= settingMap.meta_description %>">
+  <meta name="keywords" content="<%= settingMap.meta_keywords %>">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav">
+      <div class="brand">Property Nama</div>
+      <div class="links">
+        <a href="/blogs">Blogs</a>
+        <% pages.forEach(page => { %>
+          <a href="/page/<%= page.slug %>"><%= page.title %></a>
+        <% }) %>
+      </div>
+    </nav>
+    <div class="hero-content">
+      <h1><%= settingMap.site_title %></h1>
+      <p>Premium property guidance, investment insights, and professional real estate solutions in Pakistan.</p>
+      <a class="btn" href="https://wa.me/<%= settingMap.whatsapp %>">Contact on WhatsApp</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>Featured Pages</h2>
+      <div class="grid">
+        <% pages.forEach(page => { %>
+          <article class="card">
+            <h3><%= page.title %></h3>
+            <p><%= page.content.substring(0, 120) %>...</p>
+            <a href="/page/<%= page.slug %>">Read More</a>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Latest Blogs</h2>
+      <div class="grid">
+        <% blogs.forEach(blog => { %>
+          <article class="card">
+            <h3><%= blog.title %></h3>
+            <p><%= blog.excerpt || blog.content.substring(0, 120) %>...</p>
+            <a href="/blog/<%= blog.slug %>">Read Blog</a>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <%= new Date().getFullYear() %> <%= settingMap.site_name %></p>
+    <div>
+      <a href="<%= settingMap.facebook %>">Facebook</a>
+      <a href="<%= settingMap.instagram %>">Instagram</a>
+      <a href="<%= settingMap.linkedin %>">LinkedIn</a>
+    </div>
+  </footer>
+</body>
+</html>

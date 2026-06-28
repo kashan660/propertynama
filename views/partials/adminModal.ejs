@@ -1,0 +1,14 @@
+<div class="panel">
+  <h3>Create Page</h3>
+  <form method="post" action="/admin/pages" enctype="multipart/form-data">
+    <input name="slug" placeholder="Page Slug" required>
+    <input name="title" placeholder="Page Title" required>
+    <textarea name="content" rows="6" placeholder="Page content"></textarea>
+    <input name="summary" placeholder="Short Summary">
+    <input name="video" placeholder="Video URL">
+    <input name="template" placeholder="Template (default)">
+    <input name="image" type="file">
+    <label><input name="isPublished" type="checkbox" checked> Publish</label>
+    <button type="submit">Create Page</button>
+  </form>
+</div>

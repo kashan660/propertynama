@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= blog.title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav inner-nav">
+    <div class="brand">Property Nama</div>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="/blogs">Blogs</a>
+    </div>
+  </nav>
+  <main class="content-page">
+    <h1><%= blog.title %></h1>
+    <% if (blog.image) { %><img src="<%= blog.image %>" alt="<%= blog.title %>"><% } %>
+    <div class="rich-content"><%- blog.content %></div>
+    <% if (blog.video) { %><iframe src="<%= blog.video %>" allowfullscreen></iframe><% } %>
+  </main>
+</body>
+</html>

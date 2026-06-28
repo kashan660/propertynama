@@ -1,0 +1,10 @@
+node_modules/
+.git/
+.env
+.env*
+.vercel
+database.sqlite
+*.tar
+*.zip
+*.gz
+scripts/migrate-mirror.js
